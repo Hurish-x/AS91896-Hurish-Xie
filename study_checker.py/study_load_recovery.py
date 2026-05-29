@@ -25,23 +25,21 @@ main_menu_options = [
 def load_record():
     """Load menu from record.json
 
-    Args:
-        filename (str): The JSON filename to load.
-
     Returns:
         list: The loaded list of menu, or an empty list if the file is
         missing or corrupted.
     """
     try:
-        with open("record.json", "r") as file:
+        with open("./record.json", "r") as file:
             return json.load(file)
     except FileNotFoundError:
-        with open("record.json", "w") as file:
+        with open("./record.json", "w") as file:
             json.dump({}, file, indent=2)
+            return{}
     except json.JSONDecodeError:
         print("Warning: data file was corrupted. Starting fresh.")
         return {}
-load_record()
+
 
 
 def save_record(data):
@@ -58,8 +56,18 @@ def save_record(data):
     
 
 
-def get_valid_float():
-    pass
+def get_valid_float(question,min,max):
+    """ask user question ,get input value and judge if the inputs are in 
+    reasonable range
+
+    Args:question are string parameter used in guibox 
+    min and max are float parameter used in "if" judge part
+
+    Return:
+    """
+
+
+    
 
 
 def get_valid_int():
@@ -115,4 +123,4 @@ def main():
 
 
 if __name__ == "__main__":
-main()
+    main()
