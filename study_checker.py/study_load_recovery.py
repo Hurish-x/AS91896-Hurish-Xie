@@ -63,9 +63,19 @@ def get_valid_float(question,min,max):
     Args:question are string parameter used in guibox 
     min and max are float parameter used in "if" judge part
 
-    Return:
+    Return:the function will return the float number for given question
     """
-
+    while True:
+        user_input = enterbox(question,app_title)
+        if user_input == None:
+            return None
+        user_input = user_input.strip()
+        if user_input == "" :
+            msgbox("The value can not be empty")
+        
+            
+        
+             
 
     
 
@@ -119,7 +129,8 @@ def save_exit():
 
 
 def main(): 
-    pass
+    records = load_record()
+    records = add_daily_log()
 
 
 if __name__ == "__main__":
