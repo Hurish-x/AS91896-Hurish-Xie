@@ -72,28 +72,53 @@ def get_valid_float(question,min,max):
         user_input = user_input.strip()
         if user_input == "" :
             msgbox("The value can not be empty")
-        
-            
-        
-             
-
-    
-
-
-def get_valid_int():
-    pass
+            continue
+        try:
+            number = float(user_input)
+        except ValueError:
+            msgbox("Please enter a number,such as 2.5,6")
+            continue
+        return number
 
 
-def get_valid_date():
-    pass
+def get_valid_int(question,min,max):
+    """ask user question ,get integer value and judge if the inputs are
+    in reasonable range
+
+    Args:question are string parameter used in guibox 
+    min and max are integer number parameter used in "if" judge part
+
+    Return:the function will return the integer number for given 
+    question
+    """
+    while True:
+        user_input = enterbox(question,app_title)
+        if user_input == None:
+            return None
+        user_input = user_input.strip()
+        if user_input == "" :
+            msgbox("The value can not be empty")
+            continue
+        try:
+            number = int(user_input)
+        except ValueError:
+            msgbox("Please enter a integer number,such as 3,4,5")
+            continue
+        return number
 
 
 def show_menu():
     pass
 
 
-def add_daily_log():
-    pass
+def add_daily_log(records):
+    """ Getting data from user and add new record to the previous
+    dictionary
+
+    Arg:record is the dictionary parameter I got in the load_data 
+    function
+    """
+    
 
 
 def view_all_logs():
