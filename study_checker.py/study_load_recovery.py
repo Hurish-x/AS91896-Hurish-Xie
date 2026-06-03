@@ -67,7 +67,7 @@ def get_valid_float(question,min,max):
     """
     while True:
         user_input = enterbox(question,app_title)
-        if user_input == None:
+        if user_input is None:
             return None
         user_input = user_input.strip()
         if user_input == "" :
@@ -93,7 +93,7 @@ def get_valid_int(question,min,max):
     """
     while True:
         user_input = enterbox(question,app_title)
-        if user_input == None:
+        if user_input is None:
             return None
         user_input = user_input.strip()
         if user_input == "" :
@@ -115,9 +115,66 @@ def add_daily_log(records):
     """ Getting data from user and add new record to the previous
     dictionary
 
-    Arg:record is the dictionary parameter I got in the load_data 
+    Arg:record is the dictionary parameter getting in the load_data 
     function
     """
+    time = datetime.now().strftime("%d-%m-%Y")
+    study_time = get_valid_float("How much time do you study today",
+                                 0,
+                                 24)
+    if study_time is None:
+        return records
+    social_time = get_valid_float(
+        "How much time do you connect with friends or famiy?"
+        0,
+        24)
+    if social_time is None:
+        return records
+    sleep_time = get_valid_float(
+        "How much time do you sleep last night?",
+        0,
+        24
+    )
+    if sleep_time is None:
+        return records
+    stress_level = get_valid_int(
+        "How stressful do you think you are today?(you need to enter a\
+        integer number from 1-5 and 1 is lowerst)",
+        1,
+        5
+    )
+    if stress_level is None:
+        return records
+    focus_level = get_valid_int(
+        "How concentrated do you think you are today?(you need to enter\
+        a integer number from 1-5 and 1 is lowest)"
+        1,
+        5
+    )
+    if focus_level is None:
+        return records
+    goal_completion = get_valid_int(
+        "How concentrated do you think you are today?(you need to enter\
+        a integer number from 1-5 and 1 is lowest)"
+        1,
+        5
+    )
+    if focus_level is None:
+        return records
+    
+    daily_entry = {
+        "study": {
+            "study_time":study_time,
+            "goal_completion":goal_completion
+        },
+        "recovery":{
+            "sleep_time":sleep_time,
+            
+
+        }
+    }
+    
+    
     
 
 
@@ -155,7 +212,7 @@ def save_exit():
 
 def main(): 
     records = load_record()
-    records = add_daily_log()
+    records = add_daily_log(records)
 
 
 if __name__ == "__main__":
