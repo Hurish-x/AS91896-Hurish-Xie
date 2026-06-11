@@ -55,7 +55,6 @@ def save_record(data):
 
     
 
-
 def get_valid_float(question,min,max):
     """ask user question ,get input value and judge if the inputs are in 
     reasonable range
@@ -69,12 +68,17 @@ def get_valid_float(question,min,max):
         user_input = enterbox(question,app_title)
         if user_input is None:
             return None
+        # get rid of space between input 
         user_input = user_input.strip()
         if user_input == "" :
             msgbox("The value can not be empty")
             continue
         try:
             number = float(user_input)
+            if number > max or number < min :
+                msgbox(f"Your enter should between {min} and {max}")
+                continue
+        # in case that user input other kind if string like"abc"
         except ValueError:
             msgbox("Please enter a number,such as 2.5,6")
             continue
@@ -98,9 +102,13 @@ def get_valid_int(question,min,max):
         user_input = user_input.strip()
         if user_input == "" :
             msgbox("The value can not be empty")
-            continue
+            continue        
         try:
             number = int(user_input)
+            # check if the input is in range
+            if number > max or number < min :
+                msgbox(f"Your enter should between {min} and {max}")
+                continue
         except ValueError:
             msgbox("Please enter a integer number,such as 3,4,5")
             continue
@@ -122,10 +130,12 @@ def add_daily_log(records):
     study_time = get_valid_float("How much time do you study today",
                                  0,
                                  24)
+    # prevent code breaks if user does not enter in get_valid_float 
+    #function,and send previous dictionary to records
     if study_time is None:
         return records
     social_time = get_valid_float(
-        "How much time do you connect with friends or famiy?"
+        "How much time do you connect with friends or famiy?",
         0,
         24)
     if social_time is None:
@@ -147,7 +157,7 @@ def add_daily_log(records):
         return records
     focus_level = get_valid_int(
         "How concentrated do you think you are today?(you need to enter\
-        a integer number from 1-5 and 1 is lowest)"
+        a integer number from 1-5 and 1 is lowest)",
         1,
         5
     )
@@ -155,7 +165,7 @@ def add_daily_log(records):
         return records
     goal_completion = get_valid_int(
         "How concentrated do you think you are today?(you need to enter\
-        a integer number from 1-5 and 1 is lowest)"
+        a integer number from 1-5 and 1 is lowest)",
         1,
         5
     )
@@ -169,17 +179,34 @@ def add_daily_log(records):
         },
         "recovery":{
             "sleep_time":sleep_time,
-            
-
+            "stress_level":stress_level,
+            "focus_level":focus_level
+        },
+        "social":{
+            "social_tiem":social_time
         }
     }
+    records[time] = daily_entry
+    msgbox(app_title,"The log have been saved successfully")
+
+
+def format_text(date,entry):
+    """format the dictionary into readable text
     
-    
+    Args:date is the 
+    """
+    log_text = (
+        f"Date:{date}\n"
+        f"Study time":{entry["study"]["study_time"]} hours"
+
+    )
     
 
 
+
+    
 def view_all_logs():
-    pass
+
 
 
 def search_log():
