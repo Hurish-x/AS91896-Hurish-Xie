@@ -2,35 +2,35 @@
 import json
 from easygui import *
 app_title = "tracker"
-def get_valid_int(question,min,max):
-    """ask user question ,get integer value and judge if the inputs are
-    in reasonable range
-
-    Args:question are string parameter used in guibox 
-    min and max are integer number parameter used in "if" judge part
-
-    Return:the function will return the integer number for given 
-    question
-    """
-    while True:
-        user_input = enterbox(question,app_title)
-        if user_input is None:
-            return None
-        user_input = user_input.strip()
-        if user_input == "" :
-            msgbox("The value can not be empty")
-            continue        
-        try:
-            number = int(user_input)
-            if  number > max or number < min :
-                msgbox(f"Your enter should between {min} and {max}")
-                continue
-        except ValueError:
-            msgbox("Please enter a integer number,such as 3,4,5")
-            continue
-        return number
+def format_text(date,entry):
+    """format the dictionary into readable text
     
-get_valid_int("67",1,5)
+    Args:date is the key value in the nested dictionary
+    """
+    log_text = (
+        f"Date:{date}\n"
+        f"Study time: {entry["study"]["study_time"]} hours\n"
+        f"Goal Completion: {entry["study"]["goal_completion"]}\n"
+        f"Sleep Time: {entry["recovery"]["sleep_time"]} hours\n"
+        f"Stress Level: {entry["recovery"]["stress_level"]}\n"
+        f"Focus Level: {entry["recovery"]["focus_level"]}\n"
+        f"Social Time: {entry["social"]["social_time"]} hours\n"
+    )
+    return log_text
+print(format_text(date = "2026-06-15",entry = {
+    "study": {
+        "study_time": 4.5,
+        "goal_completion": 3
+    },
+    "recovery": {
+        "sleep_time": 7.5,
+        "stress_level": 4,
+        "focus_level": 3 
+    },
+    "social": {
+        "social_time": 2.0
+    }
+}))
 
 
 
