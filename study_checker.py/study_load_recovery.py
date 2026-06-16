@@ -183,7 +183,7 @@ def add_daily_log(records):
             "focus_level":focus_level
         },
         "social":{
-            "social_tiem":social_time
+            "social_time":social_time
         }
     }
     records[time] = daily_entry
@@ -193,29 +193,154 @@ def add_daily_log(records):
 def format_text(date,entry):
     """format the dictionary into readable text
     
-    Args:date is the 
+    Args:date is the key value in the nested dictionary
     """
     log_text = (
         f"Date:{date}\n"
-        f"Study time":{entry["study"]["study_time"]} hours"
-
+        f"Study time:{entry["study"]["study_time"]} hours\n"
+        f"Goal Completion:{entry["study"]["goal_completion"]}/5\n"
+        f"Sleep Time:{entry["recovery"]["sleep_time"]} hours\n"
+        f"Stress Level:{entry["recovery"]["stress_level"]}/5\n"
+        f"Focus Level:{entry["recovery"]["focus_level"]}/5\n"
+        f"Social Time:{entry["social"]["social_time"]} hours\n"
     )
-    
+    return log_text
 
 
+def view_all_logs(records):
+    """show all saved logs to users in readable form
 
-    
-def view_all_logs():
-
+    Args: record is the dictionary parameter getting in the load_data 
+    function 
+    """
+    #prevent the dictionary is empty if the user uses for the first time 
+    if records == {}:
+        msgbox("No records have been saved so far")
+        return
+    all_logs = ""
+    #add formatted text in empty string and put in  textbox to display
+    for date in sorted(records):
+        entry = records[date]
+        all_logs += format_text(date,entry)
+        all_logs += "-"*30 + "\n\n"
+    textbox("There are all your records saved",app_title,all_logs)
 
 
 def search_log():
     pass
 
 
-def edit_log():
-    pass
+def edit_log(records):
+    """Edit one field in an existing daily log."""
+    if records == {}:
+        msgbox("There are no daily logs to edit.", app_title)
+        return records
 
+    date_choices = sorted(records.keys())
+
+    date_to_edit = choicebox(
+        "Choose a date to edit:",
+        app_title,
+        date_choices
+    )
+
+    if date_to_edit is None:
+        return records
+
+    current_log = format_text(date_to_edit, records[date_to_edit])
+
+    field_to_edit = buttonbox(
+        f"Current log:\n\n{current_log}\n\nWhat do you want to edit?",
+        app_title,
+        choices=[
+            "Study Time",
+            "Sleep Time",
+            "Social Time",
+            "Stress Level",
+            "Focus Level",
+            "Goal Completed",
+            "Cancel"
+        ]
+    )
+
+    if field_to_edit == "Cancel" or field_to_edit is None:
+        return records
+
+    if field_to_edit == "Study Time":
+        new_value = get_valid_float(
+            "Enter the new study time:",
+            0,
+            24
+        )
+
+        if new_value is None:
+            return records
+
+        records[date_to_edit]["study"]["study_time"] = new_value
+
+    elif field_to_edit == "Sleep Time":
+        new_value = get_valid_float(
+            "Enter the new sleep time:",
+            0,
+            24
+        )
+
+        if new_value is None:
+            return records
+
+        records[date_to_edit]["recovery"]["sleep_time"] = new_value
+
+    elif field_to_edit == "Social Time":
+        new_value = get_valid_float(
+            "Enter the new social time:",
+            0,
+            24
+        )
+
+        if new_value is None:
+            return records
+
+        records[date_to_edit]["social"]["social_time"] = new_value
+
+    elif field_to_edit == "Stress Level":
+        new_value = get_valid_int(
+            "Enter the new stress level from 1 to 5:",
+            1,
+            5
+        )
+
+        if new_value is None:
+            return records
+
+        records[date_to_edit]["recovery"]["stress_level"] = new_value
+
+    elif field_to_edit == "Focus Level":
+        new_value = get_valid_int(
+            "Enter the new focus level from 1 to 5:",
+            1,
+            5
+        )
+
+        if new_value is None:
+            return records
+
+        records[date_to_edit]["recovery"]["focus_level"] = new_value
+
+    elif field_to_edit == "Goal Completed":
+        new_value = get_valid_int(
+            "How you complete your main study goal?",
+            1,
+            5
+        )
+
+        if new_value is None:
+            return records
+
+        records[date_to_edit]["study"]["goal_completed"] = new_value
+
+    msgbox("The daily log has been updated.", app_title)
+
+    return records
 
 def delete_log():
     pass
