@@ -22,6 +22,8 @@ main_menu_options = [
     "View Analysis Conclusion",
     "Save and Exit"
 ]
+
+
 def load_record():
     """Load menu from record.json
 
@@ -41,34 +43,33 @@ def load_record():
         return {}
 
 
+def save_record(records):
+    """Save records to record.json
 
-def save_record(data):
-    """save records to record.json
-
-    catch saving errors print out the reasons
+     Arg:Records is the dictionary parameter getting in the load_data 
+    function
     """
     try:
         with open("record.json", "w") as file:
-            json.dump(data, file, indent=2)
+            json.dump(records, file, indent=2)
     except Exception as e:
         msgbox(f"unable to save:{e}")
 
     
-
 def get_valid_float(question,min,max):
-    """ask user question ,get input value and judge if the inputs are in 
+    """Ask user question ,get input value and judge if the inputs are in 
     reasonable range
 
-    Args:question are string parameter used in guibox 
+    Args:Question are string parameter used in guibox 
     min and max are float parameter used in "if" judge part
 
-    Return:the function will return the float number for given question
+    Return:The function will return the float number for given question
     """
     while True:
         user_input = enterbox(question,app_title)
         if user_input is None:
             return None
-        # get rid of space between input 
+        # Get rid of space between input 
         user_input = user_input.strip()
         if user_input == "" :
             msgbox("The value can not be empty")
@@ -78,7 +79,7 @@ def get_valid_float(question,min,max):
             if number > max or number < min :
                 msgbox(f"Your enter should between {min} and {max}")
                 continue
-        # in case that user input other kind if string like"abc"
+        # In case that user input other kind of string like"abc"
         except ValueError:
             msgbox("Please enter a number,such as 2.5,6")
             continue
@@ -86,13 +87,13 @@ def get_valid_float(question,min,max):
 
 
 def get_valid_int(question,min,max):
-    """ask user question ,get integer value and judge if the inputs are
+    """Ask user question ,get integer value and judge if the inputs are
     in reasonable range
 
-    Args:question are string parameter used in guibox 
+    Args:Question are string parameter used in guibox 
     min and max are integer number parameter used in "if" judge part
 
-    Return:the function will return the integer number for given 
+    Return:The function will return the integer number for given 
     question
     """
     while True:
@@ -105,7 +106,7 @@ def get_valid_int(question,min,max):
             continue        
         try:
             number = int(user_input)
-            # check if the input is in range
+            # Check if the input is in range
             if number > max or number < min :
                 msgbox(f"Your enter should between {min} and {max}")
                 continue
@@ -123,41 +124,32 @@ def add_daily_log(records):
     """ Getting data from user and add new record to the previous
     dictionary
 
-    Arg:record is the dictionary parameter getting in the load_data 
+    Arg:Records is the dictionary parameter getting in the load_data 
     function
     """
     time = datetime.now().strftime("%d-%m-%Y")
-    study_time = get_valid_float("How much time do you study today",
-                                 0,
-                                 24)
-    # prevent code breaks if user does not enter in get_valid_float 
-    #function,and send previous dictionary to records
+    study_time = get_valid_float("How much time do you study today", 0,24)
+
+    # Prevent code breaks if user does not enter in get_valid_float 
+    #Function,and send previous dictionary to records
     if study_time is None:
         return records
     social_time = get_valid_float(
-        "How much time do you connect with friends or famiy?",
-        0,
-        24)
+        "How much time do you connect with friends or famiy?", 0, 24)
     if social_time is None:
         return records
     sleep_time = get_valid_float(
-        "How much time do you sleep last night?",
-        0,
-        24
-    )
+        "How much time do you sleep last night?", 0,24)
     if sleep_time is None:
         return records
     stress_level = get_valid_int(
-        "How stressful do you think you are today?(you need to enter a\
-        integer number from 1-5 and 1 is lowerst)",
-        1,
-        5
-    )
+        "How stressful do you think you are today?(You need to enter a integer \
+        number from 1-5 and 1 is lowerst)",1,5)
     if stress_level is None:
         return records
     focus_level = get_valid_int(
-        "How concentrated do you think you are today?(you need to enter\
-        a integer number from 1-5 and 1 is lowest)",
+        "How concentrated do you think you are today?(you need to enter a  \
+        integer number from 1-5 and 1 is lowest)",
         1,
         5
     )
@@ -265,17 +257,32 @@ def edit_log(records):
 
     if field_to_edit == "Cancel" or field_to_edit is None:
         return records
+    
+    new_value = get_valid_float(f"Enter the new {field_to_edit}:", 0, 24)
+    new_value = get_valid_float(f"Enter the new {field_to_edit}:", 1 ,5)
+    if new_value is None:
+            return records
+    entry = "_".join(field_to_edit.lower().split())
+    records[date_to_edit]["study"][entry] = new_value
+    
+    if field_to_edit == "Study Time" or "Sleep Time" or "Socail Time":
+        if field_to_edit == "Study Time" or "Sleep time":
+            new_value = get_valid_float(f"Enter the new {field_to_edit}:", 0, 
+                                        24)
+            if new_value is None:
+                return records
+            entry = "_".join(field_to_edit.lower().split())
+            records[date_to_edit]["study"][entry] = new_value
+        if field_to_edit == "Social Time":
+
+
+
+
 
     if field_to_edit == "Study Time":
-        new_value = get_valid_float(
-            "Enter the new study time:",
-            0,
-            24
-        )
-
+        new_value = get_valid_float("Enter the new study time:", 0, 24)
         if new_value is None:
             return records
-
         records[date_to_edit]["study"]["study_time"] = new_value
 
     elif field_to_edit == "Sleep Time":
