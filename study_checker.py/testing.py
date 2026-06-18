@@ -30,35 +30,81 @@ records= {  "2026-06-15" :{
 
     } }
 }
-def format_text(date,entry):
-    """format the dictionary into readable text
-    
-    Args:date is the key value in the nested dictionary
+def get_valid_float(question,min,max):
+    """Ask user question ,get input value and judge if the inputs are in 
+    reasonable range
+
+    Args:Question are string parameter used in guibox 
+    min and max are float parameter used in "if" judge part
+
+    Return:The function will return the float number for given question
     """
-    log_text = (
-        f"Date:{date}\n"
-        f"Study time:{entry["study"]["study_time"]} hours\n"
-        f"Goal Completion:{entry["study"]["goal_completion"]}/5\n"
-        f"Sleep Time:{entry["recovery"]["sleep_time"]} hours\n"
-        f"Stress Level:{entry["recovery"]["stress_level"]}/5\n"
-        f"Focus Level:{entry["recovery"]["focus_level"]}/5\n"
-        f"Social Time:{entry["social"]["social_time"]} hours\n"
-    )
-    return log_text
+    while True:
+        user_input = enterbox(question,app_title)
+        if user_input is None:
+            return None
+        # Get rid of space between input 
+        user_input = user_input.strip()
+        if user_input == "" :
+            msgbox("The value can not be empty")
+            continue
+        try:
+            number = float(user_input)
+            if number > max or number < min :
+                msgbox(f"Your enter should between {min} and {max}")
+                continue
+        # In case that user input other kind of string like"abc"
+        except ValueError:
+            msgbox("Please enter a number,such as 2.5,6")
+            continue
+        return number
 
 
-def view_all_logs(records):
-    #prevent the dictionary is empty if the user uses for the first time 
-    if records == {}:
-        msgbox("No records have been saved so far")
-        return
-    all_logs = ""
-    for date in sorted(records):
-        entry = records[date]
-        all_logs += format_text(date,entry)
-        all_logs += "-"*30 + "\n\n"
-    textbox("There are all your records saved",app_title,all_logs)
-view_all_logs(records)
+def get_valid_int(question,min,max):
+    """Ask user question ,get integer value and judge if the inputs are
+    in reasonable range
+
+    Args:Question are string parameter used in guibox 
+    min and max are integer number parameter used in "if" judge part
+
+    Return:The function will return the integer number for given 
+    question
+    """
+    while True:
+        user_input = enterbox(question,app_title)
+        if user_input is None:
+            return None
+        user_input = user_input.strip()
+        if user_input == "" :
+            msgbox("The value can not be empty")
+            continue        
+        try:
+            number = int(user_input)
+            # Check if the input is in range
+            if number > max or number < min :
+                msgbox(f"Your enter should between {min} and {max}")
+                continue
+        except ValueError:
+            msgbox("Please enter a integer number,such as 3,4,5")
+            continue
+        return number
+def edit(records):
+    field_to_edit = enterbox()
+    if field_to_edit == "Study Time" or "Goal Completion":
+        if field_to_edit == "Study Time" :
+            new_value = get_valid_float(f"Enter the new {field_to_edit}:", 0, 
+                                        24)
+            if new_value is None:
+                 return records
+        if field_to_edit == "Goal Completion" :
+            new_value = get_valid_int(f"Enter the new {field_to_edit}:", 1, 
+                                        5)
+            if new_value is None:
+                return records
+            entry = "_".join(field_to_edit.lower().split())
+            records["2026-06-15"]["study"][entry] = new_value
+        
+edit(records)
 
 
 

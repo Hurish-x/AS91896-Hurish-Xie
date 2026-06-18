@@ -223,7 +223,10 @@ def search_log():
 
 
 def edit_log(records):
-    """Edit one field in an existing daily log."""
+    """Edit one field in an existing daily log.
+
+    Return:Return new records to json document
+    """
     if records == {}:
         msgbox("There are no daily logs to edit.", app_title)
         return records
@@ -240,7 +243,6 @@ def edit_log(records):
         return records
 
     current_log = format_text(date_to_edit, records[date_to_edit])
-
     field_to_edit = buttonbox(
         f"Current log:\n\n{current_log}\n\nWhat do you want to edit?",
         app_title,
@@ -254,99 +256,43 @@ def edit_log(records):
             "Cancel"
         ]
     )
-
+    #Based on what button users choose ,update new data to dictionary.
     if field_to_edit == "Cancel" or field_to_edit is None:
         return records
-    
-    new_value = get_valid_float(f"Enter the new {field_to_edit}:", 0, 24)
-    new_value = get_valid_float(f"Enter the new {field_to_edit}:", 1 ,5)
-    if new_value is None:
-            return records
-    entry = "_".join(field_to_edit.lower().split())
-    records[date_to_edit]["study"][entry] = new_value
-    
-    if field_to_edit == "Study Time" or "Sleep Time" or "Socail Time":
-        if field_to_edit == "Study Time" or "Sleep time":
+    if field_to_edit in ["Study Time" , "Goal Completion"]:
+        if field_to_edit == "Study Time" :
             new_value = get_valid_float(f"Enter the new {field_to_edit}:", 0, 
                                         24)
-            if new_value is None:
-                return records
-            entry = "_".join(field_to_edit.lower().split())
-            records[date_to_edit]["study"][entry] = new_value
-        if field_to_edit == "Social Time":
+        if field_to_edit == "Goal Completion" :
+            new_value = get_valid_int(f"Enter the new {field_to_edit}:", 1, 
+                                        5)
+        if new_value is None:
+             return records
+        #Correct the format in our key value form.
+        entry = "_".join(field_to_edit.lower().split())
+        records[date_to_edit]["study"][entry] = new_value
 
+    if field_to_edit in ["Sleep Time", "Stress Level", "Focus Level"]:
+        if field_to_edit == "Sleep Time" :
+            new_value = get_valid_float(f"Enter the new {field_to_edit}:", 0, 
+                                        24)
+        if field_to_edit == "Stress Level" or "Focus Level" :
+            new_value = get_valid_int(f"Enter the new {field_to_edit}:", 1, 
+                                        5)
+        if new_value is None:
+             return records
+        entry = "_".join(field_to_edit.lower().split())
+        records[date_to_edit]["recovery"][entry] = new_value
 
-
-
-
-    if field_to_edit == "Study Time":
-        new_value = get_valid_float("Enter the new study time:", 0, 24)
+    if field_to_edit == "Social Time":
+        new_value = get_valid_float(f"Enter the new {field_to_edit}:", 0, 
+                                        24)
         if new_value is None:
             return records
-        records[date_to_edit]["study"]["study_time"] = new_value
-
-    elif field_to_edit == "Sleep Time":
-        new_value = get_valid_float(
-            "Enter the new sleep time:",
-            0,
-            24
-        )
-
-        if new_value is None:
-            return records
-
-        records[date_to_edit]["recovery"]["sleep_time"] = new_value
-
-    elif field_to_edit == "Social Time":
-        new_value = get_valid_float(
-            "Enter the new social time:",
-            0,
-            24
-        )
-
-        if new_value is None:
-            return records
-
-        records[date_to_edit]["social"]["social_time"] = new_value
-
-    elif field_to_edit == "Stress Level":
-        new_value = get_valid_int(
-            "Enter the new stress level from 1 to 5:",
-            1,
-            5
-        )
-
-        if new_value is None:
-            return records
-
-        records[date_to_edit]["recovery"]["stress_level"] = new_value
-
-    elif field_to_edit == "Focus Level":
-        new_value = get_valid_int(
-            "Enter the new focus level from 1 to 5:",
-            1,
-            5
-        )
-
-        if new_value is None:
-            return records
-
-        records[date_to_edit]["recovery"]["focus_level"] = new_value
-
-    elif field_to_edit == "Goal Completed":
-        new_value = get_valid_int(
-            "How you complete your main study goal?",
-            1,
-            5
-        )
-
-        if new_value is None:
-            return records
-
-        records[date_to_edit]["study"]["goal_completed"] = new_value
+        entry = "_".join(field_to_edit.lower().split())
+        records[date_to_edit]["social"][entry] = new_value
 
     msgbox("The daily log has been updated.", app_title)
-
     return records
 
 def delete_log():
