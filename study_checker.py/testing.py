@@ -90,21 +90,23 @@ def get_valid_int(question,min,max):
         return number
 def edit(records):
     field_to_edit = enterbox()
-    if field_to_edit == "Study Time" or "Goal Completion":
-        if field_to_edit == "Study Time" :
+    if field_to_edit in ["Study Time" , "Goal Completion"]:
+        if field_to_edit == "Study Time":
             new_value = get_valid_float(f"Enter the new {field_to_edit}:", 0, 
                                         24)
-            if new_value is None:
-                 return records
         if field_to_edit == "Goal Completion" :
             new_value = get_valid_int(f"Enter the new {field_to_edit}:", 1, 
                                         5)
-            if new_value is None:
-                return records
-            entry = "_".join(field_to_edit.lower().split())
-            records["2026-06-15"]["study"][entry] = new_value
+        if new_value is None:
+             return records
+        #Correct the format in our key value form.
+        entry = "_".join(field_to_edit.lower().split())
+        records["2026-06-15"]["study"][entry] = new_value
+        return records
         
-edit(records)
+
+print(edit(records))
+
 
 
 
