@@ -88,25 +88,59 @@ def get_valid_int(question,min,max):
             msgbox("Please enter a integer number,such as 3,4,5")
             continue
         return number
-def edit(records):
-    field_to_edit = enterbox()
-    if field_to_edit in ["Study Time" , "Goal Completion"]:
-        if field_to_edit == "Study Time":
-            new_value = get_valid_float(f"Enter the new {field_to_edit}:", 0, 
-                                        24)
-        if field_to_edit == "Goal Completion" :
-            new_value = get_valid_int(f"Enter the new {field_to_edit}:", 1, 
-                                        5)
-        if new_value is None:
-             return records
-        #Correct the format in our key value form.
-        entry = "_".join(field_to_edit.lower().split())
-        records["2026-06-15"]["study"][entry] = new_value
+def format_text(date,entry):
+    """format the dictionary into readable text
+    
+    Args:date is the key value in the nested dictionary
+    """
+    log_text = (
+        f"Date:{date}\n"
+        f"Study time:{entry["study"]["study_time"]} hours\n"
+        f"Goal Completion:{entry["study"]["goal_completion"]}/5\n"
+        f"Sleep Time:{entry["recovery"]["sleep_time"]} hours\n"
+        f"Stress Level:{entry["recovery"]["stress_level"]}/5\n"
+        f"Focus Level:{entry["recovery"]["focus_level"]}/5\n"
+        f"Social Time:{entry["social"]["social_time"]} hours\n"
+    )
+    return log_text
+def delete_log(records):
+    """Delete one saved daily log after the user confirms."""
+    if records == {}:
+        msgbox("There are no daily logs to delete.", app_title)
         return records
-        
-
-print(edit(records))
-
+    #Place the date(the key of the dictionary) in order.
+    date_choices = sorted(records.keys())
+ 
+    date_to_delete = choicebox(
+        "Choose a date to delete:",
+        app_title,
+        date_choices
+    )
+ 
+    if date_to_delete is None:
+        return records
+ 
+    entry_text = format_text(
+        date_to_delete,
+        records[date_to_delete]
+    )
+    #Do confirmation before actually deletes the log user chose
+    confirm = buttonbox(
+        f"Are you sure you want to delete this log?\n\n{entry_text}",
+        app_title,
+        choices=["Yes", "No"]
+    )
+ 
+    if confirm == "Yes":
+        del records[date_to_delete]
+        msgbox("The daily log has been deleted.", app_title)
+    
+    if confirm == "NO":
+        msgbox("Your logs haven't been deleted",app_title)
+ 
+    return records
+delete_log(records)
+msgbox(records)
 
 
 

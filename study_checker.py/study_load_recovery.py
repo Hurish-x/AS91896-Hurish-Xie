@@ -128,18 +128,18 @@ def add_daily_log(records):
     function
     """
     time = datetime.now().strftime("%d-%m-%Y")
-    study_time = get_valid_float("How much time do you study today", 0,24)
+    study_time = get_valid_float("How much time did you study today", 0,24)
 
     # Prevent code breaks if user does not enter in get_valid_float 
     #Function,and send previous dictionary to records
     if study_time is None:
         return records
     social_time = get_valid_float(
-        "How much time do you connect with friends or famiy?", 0, 24)
+        "How much time did you connect with friends or famiy?", 0, 24)
     if social_time is None:
         return records
     sleep_time = get_valid_float(
-        "How much time do you sleep last night?", 0,24)
+        "How much time did you sleep last night?", 0,24)
     if sleep_time is None:
         return records
     stress_level = get_valid_int(
@@ -218,14 +218,10 @@ def view_all_logs(records):
     textbox("There are all your records saved",app_title,all_logs)
 
 
-def search_log():
-    pass
-
-
 def edit_log(records):
     """Edit one field in an existing daily log.
 
-    Return:Return new records to json document
+    Return:Return new records to json document.
     """
     if records == {}:
         msgbox("There are no daily logs to edit.", app_title)
@@ -259,6 +255,7 @@ def edit_log(records):
     #Based on what button users choose ,update new data to dictionary.
     if field_to_edit == "Cancel" or field_to_edit is None:
         return records
+    
     if field_to_edit in ["Study Time" , "Goal Completion"]:
         if field_to_edit == "Study Time" :
             new_value = get_valid_float(f"Enter the new {field_to_edit}:", 0, 
@@ -294,9 +291,44 @@ def edit_log(records):
 
     msgbox("The daily log has been updated.", app_title)
     return records
+ 
 
-def delete_log():
-    pass
+def delete_log(records):
+    """Delete one saved daily log after the user confirms."""
+    if records == {}:
+        msgbox("There are no daily logs to delete.", app_title)
+        return records
+    #Place the date(the key of the dictionary) in order.
+    date_choices = sorted(records.keys())
+ 
+    date_to_delete = choicebox(
+        "Choose a date to delete:",
+        app_title,
+        date_choices
+    )
+ 
+    if date_to_delete is None:
+        return records
+ 
+    entry_text = format_text(
+        date_to_delete,
+        records[date_to_delete]
+    )
+    #Do confirmation before actually deletes the log user chose
+    confirm = buttonbox(
+        f"Are you sure you want to delete this log?\n\n{entry_text}",
+        app_title,
+        choices=["Yes", "No"]
+    )
+ 
+    if confirm == "Yes":
+        del records[date_to_delete]
+        msgbox("The daily log has been deleted.", app_title)
+    
+    if confirm == "NO":
+        msgbox("Your logs haven't been deleted",app_title)
+ 
+    return records
 
 
 def view_data_summary():
