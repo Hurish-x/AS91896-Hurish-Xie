@@ -116,17 +116,16 @@ def format_text(date,entry):
     return log_text
 
 
-def get_average(records, key):
+def get_average(records,field,key):
     """Calculate the average value for one category."""
 
     total = 0
 
     for date in records:
-        total += records[date][key]
+        total += records[date][field][key]
 
     average = total / len(records)
     return average
-
 
 def analyse_records(records):
     """Analyse all study records and show a summary."""
@@ -135,17 +134,17 @@ def analyse_records(records):
         msgbox("There are no records to analyse.", app_title)
         return
 
-    average_study = get_average(records, "study_time")
-    average_social = get_average(records, "social_time")
-    average_sleep = get_average(records, "sleep_time")
-    average_stress = get_average(records, "stress_level")
-    average_goal = get_average(records, "goal_completion")
-
+    average_study = get_average(records,"study", "study_time")
+    average_social = get_average(records,"social" ,"social_time")
+    average_sleep = get_average(records, "recovery","sleep_time")
+    average_stress = get_average(records,"recovery", "stress_level")
+    average_goal = get_average(records, "study","goal_completion")
+    average_focus = get_average(records,"recovery","focus_level")
     highest_study_date = None
     highest_study_time = -1
 
     for date in records:
-        study_time = records[date]["study_time"]
+        study_time = records[date]["study"]["study_time"]
 
         if study_time > highest_study_time:
             highest_study_time = study_time
@@ -155,11 +154,12 @@ def analyse_records(records):
 
     analysis_text += f"Total days recorded: {len(records)}\n"
     analysis_text += f"Average study time: {average_study:.1f} hours\n"
+    analysis_text += f"Average stress level: {average_focus:.1f} / 5\n"
     analysis_text += f"Average social time: {average_social:.1f} hours\n"
     analysis_text += f"Average sleep time: {average_sleep:.1f} hours\n"
     analysis_text += f"Average stress level: {average_stress:.1f} / 5\n"
     analysis_text += f"Average goal completion: {average_goal:.1f}%\n\n"
-
+   
     analysis_text += f"The highest study time was {highest_study_time} hours \
     on {highest_study_date}.\n\n"
 
@@ -182,19 +182,25 @@ def analyse_records(records):
         analysis_text += "- The average stress level is low, which suggests \
             the workload is not too stressful.\n"
 
-    if average_goal >= 80:
+    if average_goal >= 8:
         analysis_text += "- The goal completion rate is strong, showing that \
             the study routine is effective.\n"
-    elif average_goal >= 50:
+    elif average_goal >= 5:
         analysis_text += "- The goal completion rate is moderate, so the \
             routine works sometimes but could be improved.\n"
     else:
         analysis_text += "- The goal completion rate is low, so the study plan\
               may need to be adjusted.\n"
-
+    
+    if average_social >= 1:
+        analysis_text += "The social time you have is exemplary,which may \
+            benefit your mental health."
+    elif average_social <= 0.5 :
+        analysis_text += "The social time is low,so you may need to connect\
+            more with your friends or family.\n"
     textbox(analysis_text, app_title)
-analyse_records(records)
 
+analyse_records(records)
 
 
 

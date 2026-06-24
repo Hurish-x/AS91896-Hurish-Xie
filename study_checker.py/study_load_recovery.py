@@ -14,10 +14,8 @@ app_title="study Load & Recovery Tracker"
 main_menu_options = [
     "Add Daily Log",
     "View All Logs",
-    "Search Log by Date",
     "Edit Log",
     "Delete Log",
-    "View Data Summary",
     "Generate Graph",
     "View Analysis Conclusion",
     "Save and Exit"
@@ -294,7 +292,10 @@ def edit_log(records):
  
 
 def delete_log(records):
-    """Delete one saved daily log after the user confirms."""
+    """Delete one saved daily log after the user confirms.
+    
+    Return:Return new records to json document.
+    """
     if records == {}:
         msgbox("There are no daily logs to delete.", app_title)
         return records
@@ -331,26 +332,127 @@ def delete_log(records):
     return records
 
 
-def view_data_summary():
-    pass
+def get_average(records,field,key):
+    """Calculate the average value for one category."""
+
+    total = 0
+
+    for date in records:
+        total += records[date][field][key]
+
+    average = total / len(records)
+    return average
+
+
+def analyse_records(records):
+    """Analyse all study records and show a summary."""
+
+    if records == {}:
+        msgbox("There are no records to analyse.", app_title)
+        return
+
+    average_study = get_average(records,"study" "study_time")
+    average_social = get_average(records,"social" "social_time")
+    average_sleep = get_average(records, "recovery","sleep_time")
+    average_stress = get_average(records,"recovery", "stress_level")
+    average_goal = get_average(records, "study"",goal_completion")
+    average_focus = get_average(records,"recovery","focus_level")
+    highest_study_date = None
+    highest_study_time = -1
+
+    for date in records:
+        study_time = records[date]["study_time"]
+
+        if study_time > highest_study_time:
+            highest_study_time = study_time
+            highest_study_date = date
+
+    analysis_text = "Study Record Analysis\n\n"
+
+    analysis_text += f"Total days recorded: {len(records)}\n"
+    analysis_text += f"Average study time: {average_study:.1f} hours\n"
+    analysis_text += f"Average stress level: {average_focus:.1f} / 5\n"
+    analysis_text += f"Average social time: {average_social:.1f} hours\n"
+    analysis_text += f"Average sleep time: {average_sleep:.1f} hours\n"
+    analysis_text += f"Average stress level: {average_stress:.1f} / 5\n"
+    analysis_text += f"Average goal completion: {average_goal:.1f}%\n\n"
+   
+    analysis_text += f"The highest study time was {highest_study_time} hours \
+    on {highest_study_date}.\n\n"
+
+    analysis_text += "Conclusion:\n"
+
+    if average_sleep < 7:
+        analysis_text += "- The average sleep time is low, which may affect \
+        focus and study performance.\n"
+    else:
+        analysis_text += "- The average sleep time is healthy, which may \
+            support better focus.\n"
+
+    if average_stress >= 4:
+        analysis_text += "- The average stress level is high, so the workload\
+              may be too heavy.\n"
+    elif average_stress >= 2.5:
+        analysis_text += "- The average stress level is moderate, so the \
+            workload seems manageable.\n"
+    else:
+        analysis_text += "- The average stress level is low, which suggests \
+            the workload is not too stressful.\n"
+
+    if average_goal >= 8:
+        analysis_text += "- The goal completion rate is strong, showing that \
+            the study routine is effective.\n"
+    elif average_goal >= 5:
+        analysis_text += "- The goal completion rate is moderate, so the \
+            routine works sometimes but could be improved.\n"
+    else:
+        analysis_text += "- The goal completion rate is low, so the study plan\
+              may need to be adjusted.\n"
+    
+    if average_social >= 1:
+        analysis_text += "The social time you have is exemplary,which may \
+            benefit your mental health"
+    elif average_social <= 0.5 :
+        analysis_text += "The social time is low,so you may need to connect\
+            more with your friends or family\n"
+
+    
+    textbox(analysis_text, app_title)
 
 
 def generate_graph():
     pass
 
 
-def analysis():
-    pass
-
-
-def save_exit():
-    pass
-
-
 def main(): 
-    records = load_record()
-    records = add_daily_log(records)
+    while True:
+        choice = buttonbox("What would you like to do?",app_title,
+                           choices=main_menu_options)
 
+        if choice == "Add Daily Log":
+            records = add_daily_log(records)
+            save_record(records)
 
+        elif choice == "View Logs":
+            view_all_logs(records)
+
+        elif choice == "Edit Log":
+            records = edit_log(records)
+            save_record(records)
+
+        elif choice == "Delete Log":
+            records = delete_log(records)
+            save_record(records)
+
+        elif choice == "Analyse Data":
+            analysis(records)
+
+        elif choice == "Generate Graph":
+            generate_graph(records)
+
+        elif choice == "Save and Exit" or choice is None:
+            save_record(records)
+            msgbox("Your records have been saved.", app_title)
+            break
 if __name__ == "__main__":
     main()
