@@ -3,8 +3,8 @@ import json
 from easygui import *
 app_title = "tracker"
 date = "2026-06-15" 
-
-records = {
+records1 = {}
+records2 = {
     "2026-06-15": {
         "study": {"study_time": 4.5, "goal_completion": 3},
         "recovery": {"sleep_time": 7.5, "stress_level": 4, "focus_level": 3},
@@ -200,7 +200,7 @@ def analyse_records(records):
             more with your friends or family.\n"
     textbox(analysis_text, app_title)
 
-analyse_records(records)
+analyse_records(records1)
 
 
 

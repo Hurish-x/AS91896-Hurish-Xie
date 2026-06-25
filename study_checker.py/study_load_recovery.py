@@ -7,6 +7,8 @@ what helps them study well by analysing the data
 import json
 from datetime import datetime
 from easygui import *
+import matplotlib.pyplot as plt
+import numpy as np
 
 record_file="record.json"
 graph_file="graph.png"
@@ -333,7 +335,11 @@ def delete_log(records):
 
 
 def get_average(records,field,key):
-    """Calculate the average value for one category."""
+    """Calculate the average value for one category.
+    
+    Args:"field" is the key in the inner dictinary after date."key"is the key 
+    in the smallest dictionary
+    """
 
     total = 0
 
@@ -361,7 +367,7 @@ def analyse_records(records):
     highest_study_time = -1
 
     for date in records:
-        study_time = records[date]["study_time"]
+        study_time = records[date]["study"]["study_time"]
 
         if study_time > highest_study_time:
             highest_study_time = study_time
@@ -417,18 +423,25 @@ def analyse_records(records):
             more with your friends or family\n"
 
     
-    textbox(analysis_text, app_title)
+    msgbox(analysis_text, app_title)
 
 
-def generate_graph():
-    pass
+def generate_graph(records):
+
+
+x = np.array(["A", "B", "C", "D"])
+y = np.array([3, 8, 1, 10])
+
+plt.bar(x,y)
+plt.show()
+    
 
 
 def main(): 
     while True:
         choice = buttonbox("What would you like to do?",app_title,
                            choices=main_menu_options)
-
+        records = load_record()
         if choice == "Add Daily Log":
             records = add_daily_log(records)
             save_record(records)
@@ -445,14 +458,14 @@ def main():
             save_record(records)
 
         elif choice == "Analyse Data":
-            analysis(records)
+            analyse_records(records)
 
         elif choice == "Generate Graph":
             generate_graph(records)
 
         elif choice == "Save and Exit" or choice is None:
             save_record(records)
-            msgbox("Your records have been saved.", app_title)
+            msgbox("Thanks for using this program!", app_title)
             break
 if __name__ == "__main__":
     main()
