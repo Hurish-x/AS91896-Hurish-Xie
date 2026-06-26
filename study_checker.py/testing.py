@@ -200,7 +200,94 @@ def analyse_records(records):
             more with your friends or family.\n"
     textbox(analysis_text, app_title)
 
-analyse_records(records1)
 
+import matplotlib.pyplot as plt
+ 
+def generate_graph(records):
+    if len(records) == 0:
+        msgbox("No records found.", app_title)
+        return
+ 
+    dates = sorted(records.keys())
+ 
+    sleep_times = []
+    focus_levels = []
+    stress_levels = []
+    goal_completion = []
+    study_times = []
+    social_times = []
+ 
+    for date in dates:
+        entry = records[date]
+ 
+        study_times.append(entry["study"]["study_time"])
+        goal_completion.append(entry["study"]["goal_completion"])
+ 
+        sleep_times.append(entry["recovery"]["sleep_time"])
+        stress_levels.append(entry["recovery"]["stress_level"])
+        focus_levels.append(entry["recovery"]["focus_level"])
+ 
+        social_times.append(entry["social"]["social_time"])
+ 
+    # Graph 1: Sleep time and focus level over time
+    fig, ax1 = plt.subplots(figsize=(10, 5))
+ 
+    ax1.plot(dates, sleep_times, c="blue",marker="o", label="Sleep Time")
+    ax1.set_xlabel("Date")
+    ax1.set_ylabel("Sleep Time (Hours)")
+ 
+    ax2 = ax1.twinx()
+    ax2.plot(dates, focus_levels,c="red", marker="o", label="Focus Level")
+    ax2.set_ylabel("Focus Level (1-5)")
+ 
+    plt.title("Sleep Time and Focus Level Over Time")
+    plt.xticks(rotation=45)
+    fig.tight_layout()
+    plt.savefig("sleep_focus_graph.png")
+    plt.close()
+ 
+    # Graph 2: Stress level and goal completion over time
+    fig, ax2 = plt.subplots(figsize=(10, 5))
+ 
+    ax2.plot(dates, sleep_times, c="blue",marker="o", label="Goal Completion")
+    ax2.set_xlabel("Date")
+    ax2.set_ylabel("Sleep Time (Hours)")
+ 
+    ax3 = ax2.twinx()
+    ax3.plot(dates, focus_levels,c="red", marker="o", label="Stress Level")
+    ax3.set_ylabel("Focus Level (1-5)")
+ 
+    plt.title("Sleep Time and Focus Level Over Time")
+    plt.xticks(rotation=45)
+    fig.tight_layout()
+    plt.savefig("sleep_focus_graph.png")
+    plt.close()
+
+
+    # Graph 3: Average time bar chart
+    average_study = sum(study_times) / len(study_times)
+    average_sleep = sum(sleep_times) / len(sleep_times)
+    average_social = sum(social_times) / len(social_times)
+ 
+    categories = ["Study Time", "Sleep Time", "Social Time"]
+    averages = [average_study, average_sleep, average_social]
+ 
+    plt.figure(figsize=(8, 5))
+    plt.bar(categories, averages, width = 0.5)
+    plt.title("Average Daily Time")
+    plt.xlabel("Category")
+    plt.ylabel("Average Hours")
+    plt.tight_layout()
+    plt.savefig("average_time_bar_graph.png")
+    plt.close()
+ 
+    msgbox(
+        "Graphs generated successfully:\n\n"
+        "1. sleep_focus_graph.png\n"
+        "2. stress_goal_graph.png\n"
+        "3. average_time_bar_graph.png",
+        app_title
+    )
+generate_graph(records2)
 
 
