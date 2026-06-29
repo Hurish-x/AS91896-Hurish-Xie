@@ -8,7 +8,7 @@ import json
 from datetime import datetime
 from easygui import *
 import matplotlib.pyplot as plt
-import numpy as np
+import os
 
 record_file="record.json"
 graph_file="graph.png"
@@ -427,6 +427,9 @@ def analyse_records(records):
 
 
 def generate_graph(records):
+    """Generate  line graphs to show the tendency of each two variables
+    and bar graph to show the whole performance of users.
+    """
     if len(records) == 0:
         msgbox("No records found.", app_title)
         return
@@ -466,7 +469,8 @@ def generate_graph(records):
     plt.title("Sleep Time and Focus Level Over Time")
     plt.xticks(rotation=45)
     fig.tight_layout()
-    plt.savefig("sleep_focus_graph.png")
+    file_path = os.path.join("./analysis_image")
+    plt.savefig(file_path,"sleep_focus_graph.png")
     plt.close()
  
     # Graph 2: Stress level and goal completion over time
@@ -478,12 +482,13 @@ def generate_graph(records):
  
     ax3 = ax1.twinx()
     ax3.plot(dates, stress_levels,c="red", marker="o", label="Stress Level")
-    ax3.set_ylabel("Focus Level (1-5)")
+    ax3.set_ylabel("Stress Level (1-5)")
  
-    plt.title("Sleep Time and Focus Level Over Time")
+    plt.title("Goal Completion and Stress Level")
     plt.xticks(rotation=45)
     fig.tight_layout()
-    plt.savefig("sleep_focus_graph.png")
+    file_path = os.path.join("./analysis_image")
+    plt.savefig(file_path,"goal_stress_graph.png")
     plt.close()
 
 
@@ -496,16 +501,17 @@ def generate_graph(records):
     averages = [average_study, average_sleep, average_social]
  
     plt.figure(figsize=(8, 5))
-    plt.bar(categories, averages, width = 0.5)
+    plt.bar(categories, averages, width = 0.2)
     plt.title("Average Daily Time")
     plt.xlabel("Category")
     plt.ylabel("Average Hours")
     plt.tight_layout()
-    plt.savefig("average_time_bar_graph.png")
+    file_path = os.path.join("./analysis_image")
+    plt.savefig(file_path,"average_time_bar_graph.png")
     plt.close()
  
     msgbox(
-        "Graphs generated successfully:\n\n"
+        "Graphs generated successfully saved to 'analysis_image' folder:\n\n"
         "1. sleep_focus_graph.png\n"
         "2. stress_goal_graph.png\n"
         "3. average_time_bar_graph.png",
