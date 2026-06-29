@@ -9,6 +9,7 @@ from datetime import datetime
 from easygui import *
 import matplotlib.pyplot as plt
 import os
+import matplotlib.patches as mpatches
 
 record_file="record.json"
 graph_file="graph.png"
@@ -422,7 +423,6 @@ def analyse_records(records):
         analysis_text += "The social time is low,so you may need to connect\
             more with your friends or family\n"
 
-    
     msgbox(analysis_text, app_title)
 
 
@@ -459,38 +459,49 @@ def generate_graph(records):
     fig, ax1 = plt.subplots(figsize=(10, 5))
  
     ax1.plot(dates, sleep_times, c="blue",marker="o", label="Sleep Time")
+    red_patch = mpatches.Patch(color='red', label="Focus Level")
+    
     ax1.set_xlabel("Date")
     ax1.set_ylabel("Sleep Time (Hours)")
  
     ax2 = ax1.twinx()
     ax2.plot(dates, focus_levels,c="red", marker="o", label="Focus Level")
+    blue_patch = mpatches.Patch(color='blue', label="Sleep Time")
+    plt.legend(handles=[red_patch, blue_patch], loc='upper right', framealpha
+               =0.8)
     ax2.set_ylabel("Focus Level (1-5)")
  
     plt.title("Sleep Time and Focus Level Over Time")
     plt.xticks(rotation=45)
     fig.tight_layout()
-    file_path = os.path.join("./analysis_image")
-    plt.savefig(file_path,"sleep_focus_graph.png")
+    plt.grid(True)
+    file_path = os.path.join("./analysis_image","sleep_focus_graph.png")
+    plt.savefig(file_path)
     plt.close()
  
     # Graph 2: Stress level and goal completion over time
     fig, ax2 = plt.subplots(figsize=(10, 5))
  
-    ax2.plot(dates, goal_completion, c="blue",marker="o", label="Goal Completion")
+    ax2.plot(dates, goal_completion, c="cyan",marker="o", label="Goal " \
+    "Completion")
+    cyan_patch = mpatches.Patch(color="cyan", label="Goal Completion")
     ax2.set_xlabel("Date")
-    ax2.set_ylabel("Sleep Time (Hours)")
+    ax2.set_ylabel("Goal Completion(1-5)")
  
-    ax3 = ax1.twinx()
-    ax3.plot(dates, stress_levels,c="red", marker="o", label="Stress Level")
+    ax3 = ax2.twinx()
+    ax3.plot(dates, stress_levels,c="brown", marker="o", label="Stress Level")
+    brown_patch = mpatches.Patch(color="brown", label="Stress Level")
+    plt.legend(handles=[cyan_patch, brown_patch], loc='upper right', framealpha
+               =0.8)
     ax3.set_ylabel("Stress Level (1-5)")
  
     plt.title("Goal Completion and Stress Level")
     plt.xticks(rotation=45)
     fig.tight_layout()
-    file_path = os.path.join("./analysis_image")
-    plt.savefig(file_path,"goal_stress_graph.png")
+    plt.grid(True)
+    file_path = os.path.join("./analysis_image","goal_stress_graph.png")
+    plt.savefig(file_path)
     plt.close()
-
 
     # Graph 3: Average time bar chart
     average_study = sum(study_times) / len(study_times)
@@ -506,8 +517,8 @@ def generate_graph(records):
     plt.xlabel("Category")
     plt.ylabel("Average Hours")
     plt.tight_layout()
-    file_path = os.path.join("./analysis_image")
-    plt.savefig(file_path,"average_time_bar_graph.png")
+    file_path = os.path.join("./analysis_image","average_time_bar_graph.png")
+    plt.savefig(file_path)
     plt.close()
  
     msgbox(
@@ -517,9 +528,7 @@ def generate_graph(records):
         "3. average_time_bar_graph.png",
         app_title
     )
-
     
-
 
 def main(): 
     while True:
