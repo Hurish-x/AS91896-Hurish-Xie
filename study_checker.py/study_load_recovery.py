@@ -25,23 +25,34 @@ main_menu_options = [
 ]
 
 
+import json
+
 def load_record():
-    """Load menu from record.json
+    """Load records from record.json
 
     Returns:
-        list: The loaded list of menu, or an empty list if the file is
-        missing or corrupted.
+        dict: The loaded dictionary of records, or an empty dict if the file is
+              missing or corrupted (and initializes the file).
     """
     try:
         with open("./record.json", "r") as file:
             return json.load(file)
-    except FileNotFoundError:
-        with open("./record.json", "w") as file:
-            json.dump({}, file, indent=2)
-            return{}
-    except json.JSONDecodeError:
-        print("Warning: data file was corrupted. Starting fresh.")
-        return {}
+            
+    except (FileNotFoundError, json.JSONDecodeError) as e:
+        # If it's a JSONDecodeError, warn the user first
+        if isinstance(e, json.JSONDecodeError):
+            msgbox("Warning: data file was corrupted or empty. Starting fresh.")
+        
+        # Overwrite/Create the file with a clean structure so it's fixe
+        #  for next time
+        default_data = {}
+        try:
+            with open("./record.json", "w") as file:
+                json.dump(default_data, file, indent=2)
+        except Exception as write_error:
+            msgbox(f"Critical: Could not initialize fresh file: {write_error}")
+            
+        return default_data
 
 
 def save_record(records):
@@ -55,6 +66,7 @@ def save_record(records):
             json.dump(records, file, indent=2)
     except Exception as e:
         msgbox(f"unable to save:{e}")
+    
 
     
 def get_valid_float(question,min,max):
@@ -117,10 +129,6 @@ def get_valid_int(question,min,max):
         return number
 
 
-def show_menu():
-    pass
-
-
 def add_daily_log(records):
     """ Getting data from user and add new record to the previous
     dictionary
@@ -144,12 +152,12 @@ def add_daily_log(records):
     if sleep_time is None:
         return records
     stress_level = get_valid_int(
-        "How stressful do you think you are today?(You need to enter a integer \
-        number from 1-5 and 1 is lowerst)",1,5)
+        "How stressful were you today?(You need to enter a  \
+        integer number from 1-5 and 1 is lowerst)",1,5)
     if stress_level is None:
         return records
     focus_level = get_valid_int(
-        "How concentrated do you think you are today?(you need to enter a  \
+        "How concentrated were you today?(you need to enter a  \
         integer number from 1-5 and 1 is lowest)",
         1,
         5
@@ -157,7 +165,7 @@ def add_daily_log(records):
     if focus_level is None:
         return records
     goal_completion = get_valid_int(
-        "How concentrated do you think you are today?(you need to enter\
+        "How did you finish your work today?(you need to enter\
         a integer number from 1-5 and 1 is lowest)",
         1,
         5
@@ -180,7 +188,7 @@ def add_daily_log(records):
         }
     }
     records[time] = daily_entry
-    msgbox(app_title,"The log have been saved successfully")
+    msgbox("The log have been saved successfully",app_title)
 
 
 def format_text(date,entry):

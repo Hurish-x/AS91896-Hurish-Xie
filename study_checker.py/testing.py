@@ -2,6 +2,7 @@
 import json
 from easygui import *
 import os
+from datetime import datetime
 app_title = "tracker"
 date = "2026-06-15" 
 records2 = {}
@@ -308,4 +309,39 @@ def generate_graph(records):
         "3. average_time_bar_graph.png",
         app_title
     )
-generate_graph(records2)
+
+
+def save_record(records):
+    """Save records to record.json
+
+     Arg:Records is the dictionary parameter getting in the load_data 
+    function
+    """
+    try:
+        with open("record.json", "w") as file:
+            json.dump(records, file, indent=2)
+    except Exception as e:
+        msgbox(f"unable to save:{e}")
+
+broken_records = {"invalid_data": {1, 2, 3}} 
+
+
+time = datetime.now().strftime("%d-%m-%Y")
+print(type(time))
+def load_record():
+    """Load menu from record.json
+
+    Returns:
+        list: The loaded list of menu, or an empty list if the file is
+        missing or corrupted.
+    """
+    try:
+        with open("./record.json", "r") as file:
+            return json.load(file)
+    except FileNotFoundError:
+        with open("./record.json", "w") as file:
+            json.dump({}, file, indent=2)
+            return{}
+    except json.JSONDecodeError:
+        msgbox("Warning: data file was corrupted. Starting fresh.")
+        return {}
