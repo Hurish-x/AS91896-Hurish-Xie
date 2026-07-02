@@ -1,1 +1,16 @@
-null
+{
+  "02-07-2026": {
+    "study": {
+      "study_time": 6.0,
+      "goal_completion": 3
+    },
+    "recovery": {
+      "sleep_time": 6.0,
+      "stress_level": 3,
+      "focus_level": 3
+    },
+    "social": {
+      "social_time": 6.0
+    }
+  }
+}

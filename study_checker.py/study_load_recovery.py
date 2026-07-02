@@ -25,34 +25,23 @@ main_menu_options = [
 ]
 
 
-import json
-
 def load_record():
-    """Load records from record.json
+    """Load menu from record.json
 
     Returns:
-        dict: The loaded dictionary of records, or an empty dict if the file is
-              missing or corrupted (and initializes the file).
+        list: The loaded list of menu, or an empty list if the file is
+        missing or corrupted.
     """
     try:
         with open("./record.json", "r") as file:
             return json.load(file)
-            
-    except (FileNotFoundError, json.JSONDecodeError) as e:
-        # If it's a JSONDecodeError, warn the user first
-        if isinstance(e, json.JSONDecodeError):
-            msgbox("Warning: data file was corrupted or empty. Starting fresh.")
-        
-        # Overwrite/Create the file with a clean structure so it's fixe
-        #  for next time
-        default_data = {}
-        try:
-            with open("./record.json", "w") as file:
-                json.dump(default_data, file, indent=2)
-        except Exception as write_error:
-            msgbox(f"Critical: Could not initialize fresh file: {write_error}")
-            
-        return default_data
+    except FileNotFoundError:
+        with open("./record.json", "w") as file:
+            json.dump({}, file, indent=2)
+            return{}
+    except json.JSONDecodeError:
+        msgbox("Warning: data file was corrupted. Starting fresh.")
+        return {}
 
 
 def save_record(records):
@@ -189,7 +178,7 @@ def add_daily_log(records):
     }
     records[time] = daily_entry
     msgbox("The log have been saved successfully",app_title)
-
+    return records
 
 def format_text(date,entry):
     """format the dictionary into readable text
@@ -539,10 +528,10 @@ def generate_graph(records):
     
 
 def main(): 
+    records = load_record()
     while True:
         choice = buttonbox("What would you like to do?",app_title,
                            choices=main_menu_options)
-        records = load_record()
         if choice == "Add Daily Log":
             records = add_daily_log(records)
             save_record(records)
