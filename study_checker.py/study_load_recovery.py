@@ -13,7 +13,7 @@ import matplotlib.patches as mpatches
 
 record_file = "record.json"
 analysis_image_folder = "analysis_image"
-app_title = "study Load & Recovery Tracker"
+app_title = "Study Load & Recovery Tracker"
 main_menu_options = [
     "Add Daily Log",
     "View All Logs",
@@ -26,11 +26,11 @@ main_menu_options = [
 
 
 def load_record():
-    """Load menu from record.json
+    """Load the student log data from record.json.
 
     Returns:
-        dictionary: The loaded dictionary, or an empty list if the file is
-        missing or corrupted.
+        dict: The loaded data dictionary, or an empty dictionary if the 
+        file is missing or corrupted.
     """
     try:
         with open(record_file, "r") as file:
@@ -45,10 +45,10 @@ def load_record():
 
 
 def save_record(records):
-    """Save records to record.json
+    """Save the student log records to record.json.
 
-     Arg:Records is the dictionary parameter getting in the load_data 
-    function
+    Args:
+        records (dict): The dictionary containing all student logs.
     """
     try:
         with open(record_file, "w") as file:
@@ -58,13 +58,17 @@ def save_record(records):
 
 
 def get_valid_float(question, min, max):
-    """Ask user question ,get input value and judge if the inputs are in 
-    reasonable range
+    """Prompt the user for a decimal number via GUI and validate the 
+    range.
 
-    Args:Question are string parameter used in GUI box 
-    min and max are float parameter used in "if" judge part
+    Args:
+        question (str): The prompt message displayed in the entry box.
+        min_val (float): The minimum acceptable value.
+        max_val (float): The maximum acceptable value.
 
-    Return:The function will return the float number for given question
+    Returns:
+        float: The validated number, or None if the user cancels the 
+        input.
     """
     while True:
         user_input = enterbox(question, app_title)
@@ -88,14 +92,16 @@ def get_valid_float(question, min, max):
 
 
 def get_valid_int(question, min, max):
-    """Ask user question ,get integer value and judge if the inputs are
-    in reasonable range
+    """Prompt the user for an integer via GUI and validate the range.
 
-    Args:Question are string parameter used in GUI box 
-    min and max are integer number parameter used in "if" judge part
+    Args:
+        question (str): The prompt message displayed in the entry box.
+        min_val (int): The minimum acceptable value.
+        max_val (int): The maximum acceptable value.
 
-    Return:The function will return the integer number for given 
-    question
+    Returns:
+        int: The validated integer, or None if the user cancels the 
+        input.
     """
     while True:
         user_input = enterbox(question, app_title)
@@ -118,11 +124,13 @@ def get_valid_int(question, min, max):
 
 
 def add_daily_log(records):
-    """ Getting data from user and add new record to the previous
-    dictionary
+    """Collect daily user metrics via GUI and add them to the records.
 
-    Arg:Records is the dictionary parameter getting in the load_data 
-    function
+    Args:
+        records (dict): The current logs dictionary.
+
+    Returns:
+        dict: The updated logs dictionary.
     """
     time = datetime.now().strftime("%d-%m-%Y")
     if time in records:
@@ -149,21 +157,18 @@ def add_daily_log(records):
     if sleep_time is None:
         return records
     stress_level = get_valid_int(
-        "How stressful were you today?(You need to enter a  \
+        "How stressed were you today?(You need to enter an  \
         integer number from 1-5 and 1 is lowest)", 1, 5)
     if stress_level is None:
         return records
     focus_level = get_valid_int(
-        "How concentrated were you today?(you need to enter a  \
-        integer number from 1-5 and 1 is lowest)",
-        1,
-        5
-    )
+        "How concentrated were you today?(you need to enter an  \
+        integer number from 1-5 and 1 is lowest)",1,5)
     if focus_level is None:
         return records
     goal_completion = get_valid_int(
         "How did you finish your work today?(you need to enter\
-        a integer number from 1-5 and 1 is lowest)",
+        an integer number from 1-5 and 1 is lowest)",
         1,
         5
     )
@@ -190,27 +195,33 @@ def add_daily_log(records):
 
 
 def format_text(date, entry):
-    """format the dictionary into readable text
+    """Format a nested log entry dictionary into a human-readable string.
 
-    Args:date is the key value in the nested dictionary
+    Args:
+        date (str): The date key for the entry.
+        entry (dict): The nested metrics dictionary for that specific 
+        date.
+
+    Returns:
+        str: A cleanly formatted multi-line summary string.
     """
     log_text = (
         f"Date:{date}\n"
-        f"Study time:{entry["study"]["study_time"]} hours\n"
-        f"Goal Completion:{entry["study"]["goal_completion"]}/5\n"
-        f"Sleep Time:{entry["recovery"]["sleep_time"]} hours\n"
-        f"Stress Level:{entry["recovery"]["stress_level"]}/5\n"
-        f"Focus Level:{entry["recovery"]["focus_level"]}/5\n"
-        f"Social Time:{entry["social"]["social_time"]} hours\n"
+        f"Study time:{entry['study']['study_time']} hours\n"
+        f"Goal Completion:{entry['study']['goal_completion']}/5\n"
+        f"Sleep Time:{entry['recovery']['sleep_time']} hours\n"
+        f"Stress Level:{entry['recovery']['stress_level']}/5\n"
+        f"Focus Level:{entry['recovery']['focus_level']}/5\n"
+        f"Social Time:{entry['social']['social_time']} hours\n"
     )
     return log_text
 
 
 def view_all_logs(records):
-    """show all saved logs to users in readable form
+    """Display all saved daily logs chronologically inside a GUI textbox.
 
-    Args: record is the dictionary parameter getting in the load_data 
-    function 
+    Args:
+        records (dict): The current logs dictionary.
     """
     # prevent the dictionary is empty if the user uses for the first time
     if records == {}:
@@ -222,13 +233,17 @@ def view_all_logs(records):
         entry = records[date]
         all_logs += format_text(date, entry)
         all_logs += "-"*30 + "\n\n"
-    textbox("There are all your records saved", app_title, all_logs)
+    textbox("There are all your saved records", app_title, all_logs)
 
 
 def edit_log(records):
-    """Edit one field in an existing daily log.
+    """Allow the user to select a date and edit a specific data field.
 
-    Return:Return new records to json document.
+    Args:
+        records (dict): The current logs dictionary.
+
+    Returns:
+        dict: The updated records dictionary.
     """
     if records == {}:
         msgbox("There are no daily logs to edit.", app_title)
@@ -304,9 +319,13 @@ def edit_log(records):
 
 
 def delete_log(records):
-    """Delete one saved daily log after the user confirms.
+    """Prompt user to choose a log date and delete it after confirmation.
 
-    Return:Return new records to json file.
+    Args:
+        records (dict): The current logs dictionary.
+
+    Returns:
+        dict: The updated records dictionary missing the deleted log.
     """
     if records == {}:
         msgbox("There are no daily logs to delete.", app_title)
@@ -339,18 +358,24 @@ def delete_log(records):
         msgbox("The daily log has been deleted.", app_title)
 
     if confirm == "No":
-        msgbox("Your logs hasn't been deleted", app_title)
+        msgbox("Your logs haven't been deleted", app_title)
 
     return records
 
 
 def get_average(records, field, key):
-    """Calculate the average value for one category.
+    """Calculate the mathematical average for a specific log metric.
 
-    Args:"field" is the key in the inner dictionary after date."key"is the key 
-    in the smallest dictionary
+    Args:
+        records (dict): The current logs dictionary.
+        field (str): The major inner dictionary category ('study', 
+        'recovery', 'social').
+        key (str): The exact metric name key (e.g., 'sleep_time').
+
+    Returns:
+        float: The average value of that category, or 0.0 if records is 
+        empty.
     """
-
     total = 0
 
     for date in records:
@@ -361,7 +386,11 @@ def get_average(records, field, key):
 
 
 def analyse_records(records):
-    """Analyse all study records and show a summary."""
+    """Analyze historical data averages and display insights to the user.
+
+    Args:
+        records (dict): The current logs dictionary.
+    """
 
     if records == {}:
         msgbox("There are no records to analyse.", app_title)
@@ -430,7 +459,7 @@ may need to be adjusted.\n"
 benefit your mental health.\n"
     elif average_social >= 0.5:
         analysis_text += "- The social time you have is moderate,so try to \
-to balance your study and social life"
+balance your study and social life"
     else:
         analysis_text += "- The social time is low,so you may need to connect \
 more with your friends or family.\n"
@@ -439,8 +468,11 @@ more with your friends or family.\n"
 
 
 def generate_graph(records):
-    """Generate  line graphs to show the tendency of each two variables
-    and bar graph to show the whole performance of users.
+    """Generate and save trends graphs (PNG format) based on historical 
+    data.
+
+    Args:
+        records (dict): The current logs dictionary.
     """
     if len(records) == 0:
         msgbox("No records found.", app_title)
@@ -551,6 +583,7 @@ def generate_graph(records):
 
 
 def main():
+    """Execute the primary runtime loop of the application menu system."""
     records = load_record()
     while True:
         choice = buttonbox("What would you like to do?", app_title,
